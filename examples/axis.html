@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>bar chart</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+    <svg></svg>
+    <script>
+        // const data = [1, 2, 3, 4, 5];
+        // d3.select('body')
+        //   .selectAll('p')
+        //   .data(data)
+        //   .enter()
+        //   .append('p')
+        //   .text(d => d)
+
+        const data = [90, 100, 56, 120, 180, 30, 40, 120, 160];
+        const svgWidth = 500;
+        const svgHeight = 300;
+        const barPadding = 5;
+        const barWidth = svgWidth / data.length;
+
+        const svg = d3.select('svg')
+            .attr("width", svgWidth)
+            .attr("height", svgHeight);
+        
+        const yScale = d3.scaleLinear()
+            .domain([0, d3.max(data)])
+            .range([svgHeight, 0]);
+
+        const xScale = d3.scaleLinear()
+            .domain([0, data.length])
+            .range([0, svgWidth]);
+
+        const x_axis = d3.axisBottom().scale(xScale);
+        const y_axis = d3.axisLeft().scale(yScale);
+
+        svg.append('g')
+            .attr("transform", "translate(50, 10)")
+            .call(y_axis);
+
+        svg.append('g')
+            .attr("transform", `translate(50, ${svgHeight - 20})`)
+            .call(x_axis)
+
+    </script>
+</body>
+</html>
