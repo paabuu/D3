@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>basic line chart</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+    <svg></svg>
+    <script>
+        const w = 500;
+        const h = 300;
+        const data = [820, 932, 901, 934, 1290, 1330, 1320];
+        const date = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+        const svg = d3.select("svg")
+            .attr("width", w)
+            .attr("height", h)
+            .attr("fill", 'red');
+
+        const y = d3.scaleLinear().domain([0, d3.max(data)]).range([0, h]);
+        const x = d3.scaleBand().domain(date).padding(1).range([0, w]);
+
+        svg.append('g')
+            .attr("transform", `translate(0, ${h - 20})`)
+            .call(d3.axisBottom(x))
+    </script>
+</body>
+</html>
