@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>basic line chart</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <style>
+        .grid line {
+            stroke: lightgrey;
+            stroke-opacity: 0.7;
+            shape-rendering: crispEdges;
+        }
+
+        .grid path {
+            stroke-width: 0;
+        }
+    </style>
+</head>
+<body>
+    <svg></svg>
+    <script>
+        const w = 500;
+        const h = 300;
+        const data = [
+            { date: 'Mon', value: 820 },
+            { date: 'Tue', value: 932 },
+            { date: 'Wed', value: 901 },
+            { date: 'Thu', value: 934 },
+            { date: 'Fri', value: 1290 },
+            { date: 'Sat', value: 1330 },
+            { date: 'Sun', value: 1320},
+        ];
+
+        const svg = d3.select("svg")
+            .attr("width", w)
+            .attr("height", h)
+            .attr("fill", 'red');
+        
+        const y = d3.scaleLinear().domain([d3.max(data.map(d => d.value)) + 200, 0]).range([0, h-40]);
+        const x = d3.scaleBand()
+            .domain(data.map(d => d.date))
+            .padding(1)
+            .align([0])
+            .range([0, w]);
+
+ 
+
+        function make_y_gridlines() {
+            return d3.axisLeft(y)
+        }
+
+        svg.append("g")			
+            .attr("class", "grid")
+            .call(make_y_gridlines()
+                .tickSize(-w + 100)
+                .tickFormat("")
+            )
+            .attr("transform", `translate(40, 0)`)
+        
+
+        svg.append('g')
+            .attr("transform", `translate(40, ${h - 40})`)
+            .call(d3.axisBottom(x))
+
+        svg.append('g')
+            .attr("transform", `translate(40, 0)`)
+            .call(d3.axisLeft(y))
+
+        const g = svg.append('g')
+            .attr('transform', `translate(40, 0)`);
+
+        const area = d3.area()
+        .x(d => x(d.date))
+        .y1(d => y(d.value))
+        .y0([y(0)]);
+
+        g.append('path')
+            .datum(data)
+            .attr('fill', 'steelblue')
+            .style("opacity", .8)
+            .attr('d', area)
+        
+        g.selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", d => x(d.date))
+            .attr("cy", d => y(d.value))
+            .attr("r", 2)
+            .attr('stroke', 'steelblue')
+            .attr('fill', '#fff')
+            .style('cursor', 'pointer')
+    </script>
+</body>
+</html>
