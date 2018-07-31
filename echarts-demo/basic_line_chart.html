@@ -12,20 +12,75 @@
     <script>
         const w = 500;
         const h = 300;
-        const data = [820, 932, 901, 934, 1290, 1330, 1320];
-        const date = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        const data = [
+            { date: 'Mon', value: 820 },
+            { date: 'Tue', value: 932 },
+            { date: 'Wed', value: 901 },
+            { date: 'Thu', value: 934 },
+            { date: 'Fri', value: 1290 },
+            { date: 'Sat', value: 1330 },
+            { date: 'Sun', value: 1320},
+        ];
 
         const svg = d3.select("svg")
             .attr("width", w)
             .attr("height", h)
             .attr("fill", 'red');
 
-        const y = d3.scaleLinear().domain([0, d3.max(data)]).range([0, h]);
-        const x = d3.scaleBand().domain(date).padding(1).range([0, w]);
+        const g = svg.append('g')
+            .attr('transform', `translate(40, 0)`);
+        
+        const y = d3.scaleLinear().domain([d3.max(data.map(d => d.value)) + 200, 0]).range([0, h-40]);
+        const x = d3.scaleBand()
+            .domain(data.map(d => d.date))
+            .padding(1)
+            .range([0, w]);
+
+        const line = d3.line(data)
+            .x(d => x(d.date) - 30)
+            .y(d => y(d.value));
 
         svg.append('g')
-            .attr("transform", `translate(0, ${h - 20})`)
+            .attr("transform", `translate(40, ${h - 40})`)
             .call(d3.axisBottom(x))
+                .selectAll('text')
+                .attr('dx', -30)
+        svg.append('g')
+            .attr("transform", `translate(40, 0)`)
+            .call(d3.axisLeft(y))
+
+
+        g.append('path')
+            .datum(data)
+            .attr('fill', 'none')
+            .attr('stroke', 'steelblue')
+            .attr('stroke-linejoin', 'round')
+            .attr('stroke-linecap', 'round')
+            .attr('stroke-width', 1.5)
+            .attr('d', line)
+        
+        g.selectAll("circle")
+            .data(data)
+            .enter()
+            .append('circle')
+            .attr('cx', d => x(d.date) - 30)
+            .attr('cy', d => y(d.value))
+            .attr("r", 4)
+            .attr("fill", '#fff')
+            .attr("stroke", 'steelblue')
+            .attr("cursor", "pointer")
+            .on('mouseover', function(d, i) {
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .attr('r', 6)
+            })
+            .on("mouseout", function(d, i) {
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .attr('r', 4)
+            })
     </script>
 </body>
 </html>
