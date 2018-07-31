@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>smoothed line chart</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+    <svg></svg>
+    <script>
+        const width = 500;
+        const height = 300;
+        const data = [
+            { date: 'Mon', value: 820 },
+            { date: 'Tue', value: 932 },
+            { date: 'Wed', value: 901 },
+            { date: 'Thu', value: 934 },
+            { date: 'Fri', value: 1290 },
+            { date: 'Sat', value: 1330 },
+            { date: 'Sun', value: 1320},
+        ];
+        const margin = {left: 50, right: 20, bottom: 30, top: 30};
+        const w = width - margin.left - margin.right;
+        const h = height - margin.top - margin.bottom;
+
+        // 画布
+        const svg = d3.select("svg")
+            .attr("width", width)
+            .attr("height", height)
+
+        const y = d3.scaleLinear()
+                    .domain([d3.max(data.map(d => d.value)), 0])
+                    .range([0, h]);
+
+        const x = d3.scaleBand()
+                    .domain(data.map(d => d.date))
+                    .padding([1])
+                    .range([0, w])
+        
+        // 添加x轴
+        svg.append('g')
+            .attr("transform", `translate(${margin.left}, ${height - margin.bottom})`)
+            .call(d3.axisBottom(x))
+            .selectAll("text")
+                .attr("dx", -25)
+
+        // 添加y轴
+        svg.append('g')
+            .attr("transform", `translate(${margin.left}, ${margin.top})`)
+            .call(d3.axisLeft(y))
+
+        // 线
+        const line = d3.line()
+            .x(d => x(d.date) - 25)
+            .y(d => y(d.value))
+            .curve(d3.curveNatural);
+
+        const g = svg.append('g')
+            .attr("transform", `translate(${margin.left}, ${margin.top})`)
+
+        g.append('path')
+                .datum(data)
+                .attr('fill', 'none')
+                .attr('stroke', 'steelblue')
+                .attr('stroke-linejoin', 'round')
+                .attr('stroke-linecap', 'round')
+                .attr('stroke-width', 1.5)
+                .attr('d', line)
+        
+        // 点
+        g.selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+                .attr("cx", d => x(d.date) - 25)
+                .attr("cy", d => y(d.value))
+                .attr("r", 3)
+                .attr("stroke", "steelblue")
+                .attr("fill", "#fff")
+    </script>
+</body>
+</html>
