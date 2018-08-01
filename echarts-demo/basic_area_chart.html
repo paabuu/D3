@@ -42,11 +42,8 @@
         const y = d3.scaleLinear().domain([d3.max(data.map(d => d.value)) + 200, 0]).range([0, h-40]);
         const x = d3.scaleBand()
             .domain(data.map(d => d.date))
-            .padding(1)
-            .align([0])
+            .padding([1])
             .range([0, w]);
-
- 
 
         function make_y_gridlines() {
             return d3.axisLeft(y)
