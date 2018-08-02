@@ -107,8 +107,6 @@
         const g = svg.append("g")
             .attr("transform", `translate(${margin.left}, ${margin.top})`)
             .on("mousemove", function() {
-                // const line = d3.line()
-                //     .x
                 const [x0, y0] = d3.mouse(this);
                 d3.select(".x-line")
                     .style("display", "block")
@@ -117,17 +115,32 @@
 
                 d3.select(".x-line-rect")
                     .style("display", "block")
-                    .attr("transform", `translate(-30, ${y0 - 7.5})`)
+                    .attr("transform", `translate(-30, ${y0 - 7.5})`);
 
                 d3.select(".x-line-text")
                     .text(parseInt(y.invert(y0)))
 
+                d3.select(".compare")
+                    .style("display", "block")
+                    .attr("transform", `translate(${x0}, ${y0})`);
+                
                 for (let i = 0; i < data1.length; i++) {
                     if (Math.abs(x0 - i * tickWidth) < tickWidth / 2) {
                         d3.select(".y-line")
                             .style("display", "block")
                             .attr("x1", i * tickWidth)
                             .attr("x2", i * tickWidth)
+
+                        d3.select(".legend-a")
+                            .text(`DATA1: ${ data1[i].value }`);
+                        d3.select(".legend-b")
+                            .text(`DATA2: ${ data2[i].value }`);
+                        d3.select(".legend-c")
+                            .text(`DATA3: ${ data3[i].value }`);
+                        d3.select(".legend-d")
+                            .text(`DATA4: ${ data4[i].value }`);
+                        d3.select(".legend-e")
+                            .text(`DATA5: ${ data5[i].value }`);
                     }
                 }
             })
@@ -137,6 +150,8 @@
                 d3.select(".x-line")
                     .style("display", "none");
                 d3.select(".y-line")
+                    .style("display", "none")
+                d3.select(".compare")
                     .style("display", "none")
             });
 
@@ -192,8 +207,6 @@
         const yTextRect = focus.append("g")
             .attr("class", "x-line-rect")
             .style("display", "none")
-            .attr("width", 30)
-            .attr("height", 15)
             .attr("transform", `translate(-30, 0)`)
         
         yTextRect.append("rect")
@@ -209,6 +222,54 @@
             .attr("y", 10)
             .attr("font-size", "12px")
             .attr("fill", "#fff")
+
+        // 数据对比
+        const compare = g.append("g")
+            .attr("class", "compare")
+            .attr("transform", "translate(100, 100)")
+
+        compare.append("rect")
+            .attr("width", 70)
+            .attr("height", 100)
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("fill", "rgba(0, 0, 0, .5)")
+
+        compare.append("text")
+            .attr("class", "legend-a")
+            .attr("transform", `translate(0, 0)`)
+            .attr("x", 0)
+            .attr("y", 10)
+            .attr("font-size", 12)
+            .attr("fill", "#fff");
+        compare.append("text")
+            .attr("class", "legend-b")
+            .attr("transform", `translate(0, 0)`)
+            .attr("x", 0)
+            .attr("y", 30)
+            .attr("font-size", 12)
+            .attr("fill", "#fff");
+        compare.append("text")
+            .attr("class", "legend-c")
+            .attr("transform", `translate(0, 0)`)
+            .attr("x", 0)
+            .attr("y", 50)
+            .attr("font-size", 12)
+            .attr("fill", "#fff");
+        compare.append("text")
+            .attr("class", "legend-d")
+            .attr("transform", `translate(0, 0)`)
+            .attr("x", 0)
+            .attr("y", 70)
+            .attr("font-size", 12)
+            .attr("fill", "#fff");
+        compare.append("text")
+            .attr("class", "legend-e")
+            .attr("transform", `translate(0, 0)`)
+            .attr("x", 0)
+            .attr("y", 90)
+            .attr("font-size", 12)
+            .attr("fill", "#fff");
 
         // 画点
         g.selectAll("circle")
