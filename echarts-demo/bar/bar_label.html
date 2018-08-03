@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>bar label</title>
+    <style>
+        .grid .domain{
+            opacity: 0;
+        }
+        .grid line {
+            stroke: lightgrey;
+        }
+    </style>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+
+</head>
+<body>
+    <svg></svg>
+    <script>
+        const width = 500;
+        const height = 300;
+        const margin = {left: 50, right: 20, bottom: 30, top: 30};
+        const w = width - margin.left - margin.right;
+        const h = height - margin.top - margin.bottom;
+
+        const years = [2012, 2013, 2014, 2015, 2016];
+        const forest = [320, 332, 301, 334, 390];
+        const steppe = [220, 182, 191, 234, 290];
+        const desert = [150, 232, 201, 154, 190];
+        const wetland = [98, 77, 101, 99, 40];
+
+        const svg = d3.select("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        const x = d3.scaleBand()
+            .padding(.1)
+            .domain(years)
+            .range([0, w]);
+
+        const y = d3.scaleLinear()
+            .domain([400, 0])
+            .range([0, h]);
+
+        const xAxis = svg.append("g")
+            .attr("transform", `translate(${margin.left}, ${height - margin.bottom})`)
+            .call(d3.axisBottom(x));
+
+        const yAxis = svg.append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`)
+            .call(d3.axisLeft(y).ticks(5));
+
+        svg.append("g")
+            .attr("class", "grid")
+            .call(
+                d3.axisLeft(y)
+                .tickSize(-w)
+                .ticks(4)
+                .tickFormat(""))
+            .attr("transform", `translate(${margin.left}, ${margin.top})`)
+
+        svg.append("g")
+            .attr("class", "grid")
+            .call(
+                d3.axisBottom(x)
+                .tickSize(h)
+                .tickFormat(""))
+            .attr("transform", `translate(${margin.left}, ${margin.top})`)
+
+        const bar = svg.append("g")
+            .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+        bar.selectAll(".forest")
+            .data(forest)
+            .enter()
+            .append("g")
+                .attr("class", "forest")
+                .attr("transform", (d, i) => `translate(${x(years[i])}, ${y(d)})`)
+                .append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("width", x.bandwidth() / 4)
+                    .attr("height", d => h - y(d))
+                    .attr("fill", "blue");
+        
+        bar.selectAll(".steppe")
+            .data(steppe)
+            .enter()
+            .append("g")
+                .attr("class", "steppe")
+                .attr("transform", (d, i) => `translate(${x(years[i]) + x.bandwidth() / 4}, ${y(d)})`)
+                .append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("width", x.bandwidth() / 4)
+                    .attr("height", d => h - y(d))
+                    .attr("fill", "steelblue");
+        
+        bar.selectAll(".desert")
+            .data(desert)
+            .enter()
+            .append("g")
+                .attr("class", "desert")
+                .attr("transform", (d, i) => `translate(${x(years[i]) + x.bandwidth() / 2}, ${y(d)})`)
+                .append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("width", x.bandwidth() / 4)
+                    .attr("height", d => h - y(d))
+                    .attr("fill", "orange");
+
+        bar.selectAll(".wetland")
+            .data(wetland)
+            .enter()
+            .append("g")
+                .attr("class", "wetland")
+                .attr("transform", (d, i) => `translate(${x(years[i]) + x.bandwidth() * .75}, ${y(d)})`)
+                .append("rect")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("width", x.bandwidth() / 4)
+                    .attr("height", d => h - y(d))
+                    .attr("fill", "red");
+
+        bar.selectAll(".forest")
+            .append("text")
+                .attr("transform", d => `translate(${x.bandwidth() / 8}, ${h - y(d) - 10}) rotate(-90)`)
+                .text(d => `${d}   Forest`)
+                .attr("alignment-baseline", "middle")
+                .attr("fill", "#fff")
+                .attr("font-size", 10);
+
+        bar.selectAll(".steppe")
+            .append("text")
+                .attr("transform", d => `translate(${x.bandwidth() / 8}, ${h - y(d) - 10}) rotate(-90)`)
+                .text(d => `${d}   Steppe`)
+                .attr("alignment-baseline", "middle")
+                .attr("fill", "#fff")
+                .attr("font-size", 10);
+
+        bar.selectAll(".desert")
+            .append("text")
+                .attr("transform", d => `translate(${x.bandwidth() / 8}, ${h - y(d) - 10}) rotate(-90)`)
+                .text(d => `${d}   Desert`)
+                .attr("alignment-baseline", "middle")
+                .attr("fill", "#fff")
+                .attr("font-size", 10);
+
+        bar.selectAll(".wetland")
+            .append("text")
+                .attr("transform", d => `translate(${x.bandwidth() / 8}, ${h - y(d) - 10}) rotate(-90)`)
+                .text(d => `${d}   Wetland`)
+                .attr("alignment-baseline", "middle")
+                .attr("fill", "#fff")
+                .attr("font-size", 10);
+    </script>
+</body>
+</html>
