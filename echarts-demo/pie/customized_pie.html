@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Simple Pie</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+    <svg></svg>
+
+    <script>
+        const w = 1000;
+        const h = 1000;
+        const r = 100;
+        const color = d3.schemeCategory10;
+        const data = [
+            {value:335, name:'直接访问'},
+            {value:310, name:'邮件营销'},
+            {value:274, name:'联盟广告'},
+            {value:235, name:'视频广告'},
+            {value:400, name:'搜索引擎'}
+        ];
+
+        const svg = d3.select("svg").attr("width", w).attr("height", h);
+        const lines = svg.append("g").attr("class", "lines");
+
+        const pie = d3.pie()
+            .value(d => d.value)
+            .sort((a, b) => a.value - b.value);
+        
+        const scale = d3.scaleLinear().range([0, 200]).domain([0, d3.max(data.map(d => d.value))]);
+
+        const arc = r => d3.arc()
+            .innerRadius(0)
+            .outerRadius(scale(r));
+
+        const outerArc = r => d3.arc()
+            .innerRadius(1.2 * scale(r))
+            .outerRadius(1.2 * scale(r));
+
+        svg.selectAll("path")
+            .data(pie(data))
+            .enter()
+            .append("path")
+                .attr("transform", `translate(300, 300)`)
+                .attr("fill", (d, i) => color[i])
+                .attr("d", d => arc(d.value)(d))
+                .on("mouseover", function(d, i) {
+                    d3.select(this)
+                        .transition()
+                        .duration(500)
+                        .ease(d3.easeBounce)
+                        .attr("d", d => arc(1.1 * d.value)(d))
+                })
+                .on("mouseout", function(d, i) {
+                    d3.select(this)
+                        .transition()
+                        .duration(300)
+                        .ease(d3.easeBounce)
+                        .attr("d", d => arc(d.value)(d))
+                })
+
+            const label = svg.append("g").attr("class", "labels");
+
+            function midAngle(d) {
+                return d.startAngle + (d.endAngle - d.startAngle) / 2;
+            }
+
+            label.selectAll("text")
+                .data(pie(data))
+                .enter()
+                .append("g")
+                .append("text")
+                    .attr("x", d => {
+                        const direction = (d.endAngle + d.startAngle) / 2 < Math.PI ? 1 : -1;
+                        return outerArc(d.value).centroid(d)[0] + 25 * direction
+                    })
+                    .attr("y", d => outerArc(d.value).centroid(d)[1] - 5)
+                    .attr("transform", d => {
+                        return `translate(300, 300)`
+                    })
+                    .attr("text-anchor", "middle")
+                    .attr("fill", "#ccc")
+                    .attr("font-size", 12)
+                    .text(d => d.data.name)
+            
+            lines.selectAll("line")
+                    .data(pie(data))
+                    .enter()
+                    .append("polyline")
+                        .attr("transform", `translate(300, 300)`)
+                        .attr("points", d => {
+                            const pos = outerArc(d.value).centroid(d);
+                            pos[0] = pos[0] + 50 * ((d.endAngle + d.startAngle) / 2 < Math.PI ? 1 : -1)
+                            return [arc(d.value).centroid(d), outerArc(d.value).centroid(d), pos]
+                        })
+                        .attr("fill", "none")
+                        .attr("stroke", "#ccc")
+
+    </script>
+</body>
+</html>
